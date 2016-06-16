@@ -7,14 +7,15 @@ the models.
 
 Finnaly it provide an helper function to register the
 API with the flask application.
+
+TODO:
+ - Provide a search API endpoint
+ - Handle Content patch (read and star)
 '''
 
-from flask_restful import reqparse, Api, Resource
+from flask_restful import Api, Resource
 
-from . import app
 from .models import db, Tag, Feed, Content
-
-from pprint import pprint
 
 def _get(self, object_id):
     '''Return an object based on its id.'''
@@ -28,7 +29,8 @@ def _delete(self, object_id):
     if instance:
         dump = instance.dump()
         db.session.delete(instance)
-        return dump , 200
+        db.session.commit()
+        return dump, 200
     return '', 404
 
 def _put(self, object_id):
@@ -74,7 +76,7 @@ def register_api(app):
 
     # Tags endpoints
     api.add_resource(factory('Tag', Tag, item_mapping), '/tag/<object_id>')
-    api.add_resource(factory('TagList', Tag,  list_mapping), '/tag')
+    api.add_resource(factory('TagList', Tag, list_mapping), '/tag')
 
     # Feeds endpoints
     api.add_resource(factory('Feed', Feed, item_mapping), '/feed/<object_id>')
@@ -82,6 +84,6 @@ def register_api(app):
 
     #content endpoints
     api.add_resource(factory('Content', Content, {'get': _get}),
-                  '/content/<object_id>')
+                     '/content/<object_id>')
     api.add_resource(factory('ContentList', Content, {'get': _get_all}), '/content')
 

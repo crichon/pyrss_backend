@@ -1,59 +1,15 @@
-# coding: utf-8
-
-import os
-from unittest.mock import patch
+'''Test models and view by simulating call to the backend'''
+from copy import deepcopy
 
 import pytest
 from flask import json
 
-import pyRss
-
-TESTING_DB = 'sqlite:////tmp/testing.db'
-HEADERS = {'Content-type': 'application/json'}
-
-def to_dict(py_object):
-    '''Convert bytes response data to dict'''
-    if isinstance(py_object, bytes):
-        return json.loads(py_object.decode('UTF-8'))
-    return py_object
-
-
-data = {
-    'tag': {'name': 'leisure'},
-    'feed': {
-        'name': 'crichon_shaarli',
-        'source': 'shaarli.terminus.crichon.eu?do=rss',
-        'tags': ['leisure']
-    },
-    'content': {
-        'url': 'feed/1',
-        'title': 'mytitle',
-        'text': 'a wonderful article',
-        'read': True,
-        'star': False
-    }
-}
-
-@pytest.fixture(scope='module')
-def app(request):
-    '''Return a ready to use application test client'''
-
-    def teardown():
-        os.remove(TESTING_DB.replace('sqlite:///', ''))
-
-    request.addfinalizer(teardown)
-
-    pyRss.app.config['SQLALCHEMY_DATABASE_URI'] = TESTING_DB
-    with pyRss.app.app_context():
-        pyRss.db.init_app(pyRss.app)
-        pyRss.init_db()
-        pyRss.register_api(pyRss.app)
-        return pyRss.app.test_client()
+from fixture import app, app_with_content, to_dict, data, HEADERS
 
 
 @pytest.fixture(params=['tag', 'feed'])
 def endpoint(request):
-    return request.param, data[request.param]
+    return request.param, deepcopy(data[request.param])
 
 def test_api(app, endpoint):
     endpoint, playload = endpoint
@@ -65,7 +21,7 @@ def test_api(app, endpoint):
     response = app.post(
         '/' + endpoint, data=json.dumps(playload), headers=HEADERS
     )
-    playload['id'] = 1
+    playload['object_id'] = 1
     assert to_dict(response.data) == playload
 
     # test get/id
@@ -94,4 +50,16 @@ def test_api(app, endpoint):
 
     # test delete
     assert to_dict(app.delete('/' + endpoint + '/1').data) == playload
+
+
+def test_content_api(app_with_content):
+
+    expected = deepcopy(data['content'])
+
+    expected['created_date'] = expected['created_date'].strftime('%Y-%m-%dT%H:%M:%S')
+    expected['feed'] = data['feed']['name']
+    expected['feed_id'] = 1
+
+    print(app_with_content.get('/content').data)
+    assert to_dict(app_with_content.get('/content').data) == [expected]
 
