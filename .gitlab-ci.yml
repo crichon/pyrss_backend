@@ -1,0 +1,10 @@
+image: python:latest
+
+before_script:
+    - pip install tox
+
+test:
+    type: test
+    scipt:
+        - tox
+
