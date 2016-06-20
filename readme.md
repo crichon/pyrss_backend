@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/crichon/pyrss_backend.svg?branch=master)](https://travis-ci.org/crichon/pyrss_backend)
+
 # pyrss_backend
 
 An rss backend built with Flask and SqlAlchemy.
