@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/crichon/pyrss_backend.svg?branch=master)](https://travis-ci.org/crichon/pyrss_backend)
+[![Build Status](https://travis-ci.org/crichon/pyrss_backend.svg?branch=master)](https://travis-ci.org/crichon/pyrss_backend) [![Coverage Status](https://coveralls.io/repos/github/crichon/pyrss_backend/badge.svg?branch=master)](https://coveralls.io/github/crichon/pyrss_backend?branch=master)
 
 # pyrss_backend
 

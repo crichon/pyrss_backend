@@ -2,7 +2,10 @@ language: python
 python:
     - '3.5'
 install:
-    - pip install tox
+    - pip install tox python-coveralls
 script:
     - tox
+after_success:  
+      - coveralls                     # Add me to upload reports to coveralls.io
+
 
