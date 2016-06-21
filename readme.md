@@ -23,7 +23,7 @@ Routes:
  - /refresh [POST]
 
 Feed and Tags exposes CRUD methods.
-Contents can already be reads since they are created internally by the
+Contents can only be reads since they are created internally by the
 feedparser update process (/refresh route).
 
 ## Launch
